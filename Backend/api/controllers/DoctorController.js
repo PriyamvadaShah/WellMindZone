@@ -1,5 +1,5 @@
 // controllers/patientController.js
-import { Patient } from "../models/Patient.js";
+import { Doctor } from "../models/Doctor.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
@@ -11,26 +11,26 @@ export const registerPatient = async (req, res) => {
         const { name, email, gender, mobile, age, password} = req.body;
         console.log("abc", req);
         // Check if the patient already exists
-        const existingPatient = await Patient.findOne({ email });
+        const existingPatient = await Doctor.findOne({ email });
         if (existingPatient) {
           return res.status(400).json({ message: "Patient already exists" });
         }
         let saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         // Create a new patient
-        const newPatient = await Patient.create({
+        const newPatient = await Doctor.create({
           name,
           email,
           gender,
           password: hashedPassword,
           mobile,
           age,
-          patientId: uuidv4(),
+          doctorId: uuidv4(),
         });
     
         res
           .status(201)
-          .json({ message: "Patient registered successfully", newPatient });
+          .json({ message: "Doctor registered successfully", newPatient });
       } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server error", error });
@@ -38,7 +38,7 @@ export const registerPatient = async (req, res) => {
 };
 
 export const getAllPatients = async (req, res) => {
-  const patients = await Patient.find();
+  const patients = await Doctor.find();
   return res.status(200).json({ data: patients });
 };
 // Login a patient
@@ -47,7 +47,7 @@ export const loginPatient = async (req, res) => {
         console.log("kk", req.body);
         const { email, password } = req.body;
         // Find the patient by email
-        const patient = await Patient.findOne({ email });
+        const patient = await Doctor.findOne({ email });
         if (!patient) {
           return res.status(400).json({ message: "Invalid credentials" });
         }
@@ -73,14 +73,14 @@ export const loginPatient = async (req, res) => {
 export const deletePatient = async (req, res) => {
   const { patientId } = req.body;
 
-  const patient = await Patient.deleteOne({ _id: patientId });
+  const patient = await Doctor.deleteOne({ _id: patientId });
 
   console.log(patient);
 
   if (!patient) {
     return res.status(400).json({
       success: false,
-      message: "Patient not found",
+      message: "Doctor not found",
     });
   }
 

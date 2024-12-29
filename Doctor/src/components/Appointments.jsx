@@ -1,143 +1,132 @@
 import React, { useState, useEffect, useContext } from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from 'react-router-dom';
-import Login from "./Login";
-
+import { useNavigate } from "react-router-dom";
 import {
   FaCalendarPlus,
   FaSearch,
-  FaEdit,
-  FaVideo,
   FaTrash,
-  FaCheckCircle,
 } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useLocation } from "react-router-dom";
 import LoginContext from "../context/LoginContext";
 
 const Appointments = () => {
   const navigate = useNavigate();
   const { isLoggedIn } = useContext(LoginContext);
   const [appointments, setAppointments] = useState([]);
-  const [doctors, setDoctors] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [newAppointment, setNewAppointment] = useState({
     patientName: "",
-    doctorId: "",
-    appointmentDate: new Date(),
+    doctorName: "",
+    dateAndTime: "",
     notes: "",
   });
 
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const selectedDoctorId = queryParams.get("doctorId");
+  const fetchAppointments = async () => {
+    try {
+      const response = await fetch("http://localhost:6005/api/patient/appointments");
+      if (response.ok) {
+        const result = await response.json();  // Get the full response object
+        console.log("Appointments data:", result);
+
+        // Check if result.data is an array and update appointments
+        if (Array.isArray(result.data)) {
+          setAppointments(result.data);
+        } else {
+          console.error("Expected an array but got:", result.data);
+        }
+      } else {
+        console.error("Failed to fetch appointments:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+    }
+  };
 
   useEffect(() => {
-    setDoctors([
-      { id: 1, name: "Dr. Smith", specialty: "Cardiology" },
-      { id: 2, name: "Dr. Johnson", specialty: "Pediatrics" },
-      { id: 3, name: "Dr. Williams", specialty: "Orthopedics" },
-    ]);
-
-    setAppointments([
-      {
-        id: 1,
-        patientName: "John Doe",
-        doctorId: 1,
-        appointmentDate: new Date(),
-        notes: "Regular checkup",
-        status: "Scheduled",
-      },
-      {
-        id: 2,
-        patientName: "Jane Smith",
-        doctorId: 2,
-        appointmentDate: new Date(Date.now() + 86400000),
-        notes: "Follow-up",
-        status: "Scheduled",
-      },
-    ]);
-
-    if (selectedDoctorId) {
-      setNewAppointment((prev) => ({ ...prev, doctorId: selectedDoctorId }));
-      setShowForm(true);
+  
+    if (isLoggedIn) {
+      fetchAppointments();
     }
-  }, [selectedDoctorId]);
+  }, [isLoggedIn]);
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewAppointment((prev) => ({ ...prev, [name]: value }));
+    setNewAppointment(prev => ({ ...prev, [name]: value }));
   };
 
   const handleDateChange = (date) => {
-    setNewAppointment((prev) => ({ ...prev, appointmentDate: date }));
+    setNewAppointment(prev => ({ ...prev, dateAndTime: date }));
   };
 
-  const validateName = (name) => {
-    const namePattern = /^[A-Za-z][A-Za-z\s]{3,}$/;
-    return namePattern.test(name);
-  };
-
-  const validateDate = (date) => {
-    return date > new Date();
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateName(newAppointment.patientName)) {
-      alert(
-        "Patient name must start with a letter and be at least 4 characters long."
-      );
-      return;
+    
+    try {
+      const appointmentData = {
+        ...newAppointment,
+      };
+      console.log("jj", appointmentData);
+      const response = await fetch("http://localhost:6005/api/patient/schedule-appointment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: 'include',
+        body: JSON.stringify(appointmentData),
+      });
+  
+      if (response.ok) {
+        await fetchAppointments(); // Fetch updated list after adding an appointment
+        setShowForm(false);
+        setNewAppointment({
+          patientName: "",
+          doctorName: "",
+          dateAndTime: "",
+          notes: "",
+        });
+      } else {
+        const errorText = await response.text();
+        console.error("Failed to schedule appointment:", errorText);
+        alert("Failed to schedule appointment. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error scheduling appointment:", error);
+      alert("Error scheduling appointment. Please check your connection and try again.");
     }
-    if (!validateDate(newAppointment.appointmentDate)) {
-      alert("Appointment date must be in the future.");
-      return;
+  };  
+
+  const deleteAppointment = async (id) => {
+    try {
+      const response = await fetch('http://localhost:6005/api/patient/delete-appointment', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ appointmentId: id }),
+      });
+  
+      if (response.ok) {
+        await fetchAppointments(); 
+      } else {
+        console.error('Error deleting appointment:', response.statusText);
+        alert('Failed to delete appointment. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error deleting appointment. Please check your connection and try again.');
     }
-    const appointment = {
-      id: appointments.length + 1,
-      ...newAppointment,
-      status: "Scheduled",
-    };
-    setAppointments([...appointments, appointment]);
-    setNewAppointment({
-      patientName: "",
-      doctorId: "",
-      appointmentDate: new Date(),
-      notes: "",
-    });
-    setShowForm(false);
   };
+    
 
-  const deleteAppointment = (id) => {
-    setAppointments(
-      appointments.filter((appointment) => appointment.id !== id)
-    );
-  };
-
-  const completeAppointment = (id) => {
-    setAppointments(
-      appointments.map((appointment) =>
-        appointment.id === id
-          ? { ...appointment, status: "Completed" }
-          : appointment
-      )
-    );
-  };
-
-  const filteredAppointments = appointments.filter(
-    (appointment) =>
-      appointment.patientName
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      doctors
-        .find((d) => d.id === appointment.doctorId)
-        ?.name.toLowerCase()
-        .includes(searchTerm.toLowerCase())
+  const filteredAppointments = appointments.filter(appointment => 
+    (appointment.patientName && appointment.patientName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (appointment.doctorName && appointment.doctorName.toLowerCase().includes(searchTerm.toLowerCase()))
   );
-
+  // console.log("ll", filteredAppointments);
   return (
     <>
       {isLoggedIn ? (
@@ -185,22 +174,17 @@ const Appointments = () => {
                   onChange={handleInputChange}
                   required
                 />
-                <select
-                  name="doctorId"
+                <input
+                  type="text"
+                  name="doctorName"
+                  placeholder="Doctor Name"
                   className="p-2 border border-gray-300 rounded"
-                  value={newAppointment.doctorId}
+                  value={newAppointment.doctorName}
                   onChange={handleInputChange}
                   required
-                >
-                  <option value="">Select Doctor</option>
-                  {doctors.map((doctor) => (
-                    <option key={doctor.id} value={doctor.id}>
-                      {doctor.name} - {doctor.specialty}
-                    </option>
-                  ))}
-                </select>
+                />
                 <DatePicker
-                  selected={newAppointment.appointmentDate}
+                  selected={newAppointment.dateAndTime}
                   onChange={handleDateChange}
                   showTimeSelect
                   dateFormat="MMMM d, yyyy h:mm aa"
@@ -215,10 +199,14 @@ const Appointments = () => {
                 />
               </div>
               <button
-                type="submit"
-                className="mt-4 bg-accent text-primary px-6 py-2 rounded-full font-bold"
+                  type="submit"
+                  onClick={(e) => {
+                      console.log("BUTTON CLICKED");
+                      handleSubmit(e);
+                  }}
+                  className="mt-4 bg-accent text-primary px-6 py-2 rounded-full font-bold"
               >
-                Schedule Appointment
+                  Schedule Appointment
               </button>
             </motion.form>
           )}
@@ -236,48 +224,24 @@ const Appointments = () => {
                   {appointment.patientName}
                 </h3>
                 <p className="text-gray-600 mb-2">
-                  Doctor:{" "}
-                  {doctors.find((d) => d.id === appointment.doctorId)?.name}
+                  Doctor: {appointment.doctorName}
                 </p>
                 <p className="text-gray-600 mb-2">
-                  Date: {appointment.appointmentDate.toLocaleString()}
+                  Date: {appointment.dateAndTime}
                 </p>
                 <p className="text-gray-600 mb-4">Notes: {appointment.notes}</p>
                 <div className="flex justify-between items-center">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      appointment.status === "Completed"
-                        ? "bg-green-200 text-green-800"
-                        : "bg-yellow-200 text-yellow-800"
-                    }`}
-                  >
-                    {appointment.status}
+                  <span className="px-2 py-1 rounded-full text-xs bg-yellow-200 text-yellow-800">
+                    Scheduled
                   </span>
                   <div>
-                  <button className="text-green-500 mr-5" title="Video" onClick={(()=>{
-                    navigate('/Videoconnect')
-                  })}>
-                      <FaVideo size={28}/>
-                    </button>
-                    <button className="text-blue-500 mr-5" title="Edit">
-                      <FaEdit size={24}/>
-                    </button>
                     <button
                       className="text-red-500 mr-5"
-                      onClick={() => deleteAppointment(appointment.id)}
+                      onClick={() => deleteAppointment(appointment._id)}
                       title="Delete"
                     >
-                      <FaTrash size={24}/>
+                      <FaTrash size={24} />
                     </button>
-                    {appointment.status !== "Completed" && (
-                      <button
-                        className="text-green-500"
-                        onClick={() => completeAppointment(appointment.id)}
-                        title="Mark as Completed"
-                      >
-                        <FaCheckCircle size={24}/>
-                      </button>
-                    )}
                   </div>
                 </div>
               </motion.div>
@@ -285,7 +249,7 @@ const Appointments = () => {
           </div>
         </div>
       ) : (
-        <Login />
+        <p>Please log in to view appointments.</p>
       )}
     </>
   );

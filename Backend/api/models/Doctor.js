@@ -1,7 +1,7 @@
 // models/Patient.js
 import mongoose from 'mongoose';
 
-const patientSchema = mongoose.Schema({
+const doctorSchema = mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -19,7 +19,7 @@ const patientSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  patientId: {
+  doctorId: {
     type: String,
     required: true,
   },
@@ -31,6 +31,6 @@ const patientSchema = mongoose.Schema({
     type: Number,
     // require: true
   }
-}, { collection :"a0_patients", timestamps: true });
+}, { collection :"a0_doctors", timestamps: true });
 
-export const Patient = mongoose.model('Patient', patientSchema);
+export const Doctor = mongoose.model('Doctor', doctorSchema);

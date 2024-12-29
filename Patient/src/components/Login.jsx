@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-
+import { useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaLock, FaSignInAlt } from "react-icons/fa";
 import LoginContext from "../context/LoginContext";
 
@@ -12,22 +12,44 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const [responseMessage, setResponseMessage] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically send the form data to your backend for authentication
-    console.log("Login attempt:", formData);
-    // Reset form after submission
+
+    try {
+
+      const response = await fetch("http://localhost:6005/api/doctor/login-doctor", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setResponseMessage("Login successful!");
+        navigate('/Patients');  
+        setIsLoggedIn(true);
+      } else {
+        setResponseMessage(data.message || "Login failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      setResponseMessage("An error occurred. Please try again later.");
+    }
+
     setFormData({
       email: "",
       password: "",
     });
-    setIsLoggedIn(true);
-    // You might want to redirect the user or show a success message here
   };
 
   return (
@@ -92,6 +114,15 @@ const Login = () => {
             Login
           </button>
         </form>
+        {responseMessage && (
+          <div
+            className={`mt-4 text-center font-medium ${
+              responseMessage.includes("successful") ? "text-green-500" : "text-red-500"
+            }`}
+          >
+            {responseMessage}
+          </div>
+        )}
         <p className="mt-4 text-center text-sm text-gray-600">
           Don't have an account?{" "}
           <Link to="/signup" className="text-accent hover:underline">
