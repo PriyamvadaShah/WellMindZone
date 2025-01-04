@@ -1,13 +1,16 @@
-import { StrictMode } from "react";
+import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
-import LoginContext from "./context/LoginContext";
+import { LoginProvider } from "./context/LoginContext";
+import { SocketProvider } from "./context/SocketProvider";
 
 createRoot(document.getElementById("root")).render(
-  <LoginContext.Provider>
-    <StrictMode>
-      <App />
-    </StrictMode>
-  </LoginContext.Provider>
+  <StrictMode>
+    <LoginProvider>
+      <SocketProvider>
+        <App />
+      </SocketProvider>
+    </LoginProvider>
+  </StrictMode>
 );

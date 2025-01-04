@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaLock, FaSignInAlt } from "react-icons/fa";
-import LoginContext from "../context/LoginContext";
+import {LoginContext} from "../context/LoginContext";
 
 const Login = () => {
   const { setIsLoggedIn } = useContext(LoginContext);

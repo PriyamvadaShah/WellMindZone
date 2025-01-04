@@ -18,8 +18,10 @@ import ContactUs from "./pages/ContactUs";
 import SignUp from "./components/SignUp";
 import Login from "./components/Login";
 import { useState } from "react";
-import LoginContext from "./context/LoginContext";
-
+import {LoginContext} from "./context/LoginContext";
+import RoomPage from "./pages/rOOM.JSX";
+import LobbyScreen from "./pages/Lobby";
+import { SocketProvider } from "./context/SocketProvider"; // Import SocketProvider
 function App() {
   const [doctors, setDoctors] = useState([
     {
@@ -126,14 +128,36 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
-    <LoginContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
-      <Router>
-        <ScrollToTop />
+    <Router>
+      <LoginContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
         <div className="bg-light min-h-screen font-sans text-primary">
+          <ScrollToTop />
           <Header />
           <main className="container mx-auto px-4 py-8">
             <Routes>
+              {/* Public routes */}
               <Route path="/" element={<Home />} />
+              <Route path="/about-us" element={<AboutUs />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-of-service" element={<TermsOfService />} />
+              <Route path="/contact-us" element={<ContactUs />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/login" element={<Login />} />
+              
+              {/* Protected routes wrapped with SocketProvider */}
+              <Route path="/room/:roomId" element={
+                <SocketProvider>
+                  <RoomPage />
+                </SocketProvider>
+              } />
+              <Route path="/lobby" element={
+                <SocketProvider>
+                  <LobbyScreen />
+                </SocketProvider>
+              } />
+              
+              {/* Other protected routes */}
               <Route path="/appointments" element={<Appointments />} />
               <Route path="/patients" element={<Patients />} />
               <Route path="/doctors" element={<Doctors doctors={doctors} />} />
@@ -142,21 +166,14 @@ function App() {
                 element={<DoctorProfile doctors={doctors} />}
               />
               <Route path="/admin" element={<Admin />} />
-              <Route path="/about-us" element={<AboutUs />} />
-              <Route path="/services" element={<Services />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/terms-of-service" element={<TermsOfService />} />
-              <Route path="/contact-us" element={<ContactUs />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/login" element={<Login />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
           <ScrollToTopButton />
           <Footer />
         </div>
-      </Router>
-    </LoginContext.Provider>
+      </LoginContext.Provider>
+    </Router>
   );
 }
 

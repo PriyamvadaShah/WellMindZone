@@ -5,10 +5,11 @@ import {
   FaCalendarPlus,
   FaSearch,
   FaTrash,
+  FaVideo
 } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import LoginContext from "../context/LoginContext";
+import {LoginContext} from "../context/LoginContext";
 
 const Appointments = () => {
   const navigate = useNavigate();
@@ -241,6 +242,14 @@ const Appointments = () => {
                       title="Delete"
                     >
                       <FaTrash size={24} />
+                    </button>
+                    <button
+                      className="text-red-500 mr-5"
+                      onClick={() => navigate('/lobby')  
+                      }
+                      title="Video Call"
+                    >
+                      <FaVideo size={24} />
                     </button>
                   </div>
                 </div>

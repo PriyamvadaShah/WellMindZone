@@ -5,10 +5,11 @@ import {
   FaCalendarPlus,
   FaSearch,
   FaTrash,
+  FaVideo
 } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import LoginContext from "../context/LoginContext";
+import {LoginContext} from "../context/LoginContext";
 
 const Appointments = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const Appointments = () => {
 
   const fetchAppointments = async () => {
     try {
-      const response = await fetch("http://localhost:6005/api/patient/appointments");
+      const response = await fetch("http://localhost:6005/api/doctor/appointments");
       if (response.ok) {
         const result = await response.json();  // Get the full response object
         console.log("Appointments data:", result);
@@ -69,7 +70,7 @@ const Appointments = () => {
         ...newAppointment,
       };
       console.log("jj", appointmentData);
-      const response = await fetch("http://localhost:6005/api/patient/schedule-appointment", {
+      const response = await fetch("http://localhost:6005/api/doctor/schedule-appointment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +101,7 @@ const Appointments = () => {
 
   const deleteAppointment = async (id) => {
     try {
-      const response = await fetch('http://localhost:6005/api/patient/delete-appointment', {
+      const response = await fetch('http://localhost:6005/api/doctor/delete-appointment', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -241,6 +242,14 @@ const Appointments = () => {
                       title="Delete"
                     >
                       <FaTrash size={24} />
+                    </button>
+                    <button
+                      className="text-red-500 mr-5"
+                      onClick={() => navigate('/lobby')  
+                      }
+                      title="Video Call"
+                    >
+                      <FaVideo size={24} />
                     </button>
                   </div>
                 </div>
