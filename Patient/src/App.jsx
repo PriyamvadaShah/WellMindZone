@@ -19,7 +19,7 @@ import SignUp from "./components/SignUp";
 import Login from "./components/Login";
 import { useState } from "react";
 import {LoginContext} from "./context/LoginContext";
-import RoomPage from "./pages/rOOM.JSX";
+import RoomPage from "./pages/Room";
 import LobbyScreen from "./pages/Lobby";
 import { SocketProvider } from "./context/SocketProvider"; // Import SocketProvider
 function App() {
@@ -127,13 +127,17 @@ function App() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  return (
-    <Router>
-      <LoginContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
-        <div className="bg-light min-h-screen font-sans text-primary">
-          <ScrollToTop />
-          <Header />
-          <main className="container mx-auto px-4 py-8">
+  // Change this part of your code:
+
+return (
+  <Router>
+    <LoginContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+      <div className="bg-light min-h-screen font-sans text-primary">
+        <ScrollToTop />
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          {/* SINGLE SocketProvider that wraps everything */}
+          <SocketProvider>
             <Routes>
               {/* Public routes */}
               <Route path="/" element={<Home />} />
@@ -145,17 +149,9 @@ function App() {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/login" element={<Login />} />
               
-              {/* Protected routes wrapped with SocketProvider */}
-              <Route path="/room/:roomId" element={
-                <SocketProvider>
-                  <RoomPage />
-                </SocketProvider>
-              } />
-              <Route path="/lobby" element={
-                <SocketProvider>
-                  <LobbyScreen />
-                </SocketProvider>
-              } />
+              {/* REMOVE the nested SocketProvider here */}
+              <Route path="/room/:roomId" element={<RoomPage />} />
+              <Route path="/lobby" element={<LobbyScreen />} />
               
               {/* Other protected routes */}
               <Route path="/appointments" element={<Appointments />} />
@@ -168,13 +164,14 @@ function App() {
               <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </main>
-          <ScrollToTopButton />
-          <Footer />
-        </div>
-      </LoginContext.Provider>
-    </Router>
-  );
+          </SocketProvider>
+        </main>
+        <ScrollToTopButton />
+        <Footer />
+      </div>
+    </LoginContext.Provider>
+  </Router>
+);
 }
 
 export default App;

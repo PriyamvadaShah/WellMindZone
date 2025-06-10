@@ -23,7 +23,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-
+      console.log("formData", formData);
       const response = await fetch("http://localhost:6005/api/doctor/login-doctor", {
         method: "POST",
         headers: {
@@ -33,7 +33,7 @@ const Login = () => {
       });
 
       const data = await response.json();
-
+      console.log("data", data);
       if (response.ok) {
         setResponseMessage("Login successful!");
         navigate('/Patients');  

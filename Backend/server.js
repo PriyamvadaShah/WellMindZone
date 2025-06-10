@@ -207,6 +207,16 @@ io.on("connection", (socket) => {
   socket.on("peer:nego:done", ({ to, ans }) => {
     io.to(to).emit("peer:nego:final", { from: socket.id, ans });
   });
+
+// In your server.js file - fix the stream:request handler
+// In your server.js file
+socket.on("stream:request", ({ to }) => {
+  // Prevent self-requests which cause loops
+  if (to === socket.id) return;
+  
+  console.log(`User ${socket.id} requesting stream from ${to}`);
+  socket.to(to).emit("stream:request", { from: socket.id });
+});
 });
 
 server.listen(PORT, () => {
