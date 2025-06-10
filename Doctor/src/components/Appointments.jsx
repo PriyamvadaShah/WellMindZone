@@ -10,6 +10,7 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {LoginContext} from "../context/LoginContext";
+import { config } from "../../vite.config";
 
 const Appointments = () => {
   const navigate = useNavigate();
@@ -23,10 +24,10 @@ const Appointments = () => {
     dateAndTime: "",
     notes: "",
   });
-
+  const baseUrl = config.apiUrl || "http://localhost:6005"; // Use config from vite.config.js
   const fetchAppointments = async () => {
     try {
-      const response = await fetch("http://localhost:6005/api/doctor/appointments");
+      const response = await fetch(`${baseUrl}/api/doctor/appointments`);
       if (response.ok) {
         const result = await response.json();  // Get the full response object
         console.log("Appointments data:", result);
@@ -70,7 +71,7 @@ const Appointments = () => {
         ...newAppointment,
       };
       console.log("jj", appointmentData);
-      const response = await fetch("http://localhost:6005/api/doctor/schedule-appointment", {
+      const response = await fetch(`${baseUrl}/api/doctor/schedule-appointment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -101,7 +102,7 @@ const Appointments = () => {
 
   const deleteAppointment = async (id) => {
     try {
-      const response = await fetch('http://localhost:6005/api/doctor/delete-appointment', {
+      const response = await fetch(`${baseUrl}/api/doctor/delete-appointment`, {
         method: 'POST',
         credentials: 'include',
         headers: {

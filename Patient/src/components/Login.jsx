@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaLock, FaSignInAlt } from "react-icons/fa";
 import {LoginContext} from "../context/LoginContext";
+import { config } from "../../vite.config";
 
 const Login = () => {
   const { setIsLoggedIn } = useContext(LoginContext);
@@ -18,13 +19,13 @@ const Login = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   const navigate = useNavigate();
-
+  const baseUrl = config.apiUrl || "http://localhost:6005"; // Use config from vite.config.js
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       console.log("formData", formData);
-      const response = await fetch("http://localhost:6005/api/doctor/login-doctor", {
+      const response = await fetch(`${baseUrl}/api/doctor/login-doctor`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

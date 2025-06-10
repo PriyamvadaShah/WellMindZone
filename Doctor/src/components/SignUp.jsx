@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { FaUser, FaEnvelope, FaLock, FaPhoneAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import PasswordStrengthBar from "react-password-strength-bar";
+import { config } from "../../vite.config"; // Adjust the path as necessary
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -39,9 +40,9 @@ const SignUp = () => {
     for (let pair of formPayload.entries()) {
       console.log(pair[0], pair[1]);
     }
-
+const baseUrl = config.apiUrl || "http://localhost:6005"; // Use config from vite.config.js
     try {
-      const response = await fetch("http://localhost:6005/api/patient/register-patient", {
+      const response = await fetch(`${baseUrl}/api/patient/register-patient`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

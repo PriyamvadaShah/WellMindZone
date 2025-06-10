@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useMemo, useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
+import { config } from '../../vite.config';
 
 // Create socket context
 const SocketContext = createContext(null);
@@ -14,10 +15,10 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [isConnecting, setIsConnecting] = useState(true);
   const [error, setError] = useState(null);
-
+  const socketUrl = useMemo(() => config.socketUrl || 'http://localhost:6005', []);
   useEffect(() => {
     // Connect to socket server
-    const socketServer = io('http://localhost:6005', {
+    const socketServer = io(socketUrl, {
       transports: ['websocket', 'polling'],
     });
 

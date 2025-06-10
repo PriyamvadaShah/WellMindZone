@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaLock, FaSignInAlt } from "react-icons/fa";
 import {LoginContext} from "../context/LoginContext";
+import { config } from "../../vite.config";
+
 
 const Login = () => {
   const { setIsLoggedIn } = useContext(LoginContext);
@@ -21,10 +23,10 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+const baseUrl = config.apiUrl || "http://localhost:6005"; // Use config from vite.config.js
     try {
 
-      const response = await fetch("http://localhost:6005/api/patient/login-patient", {
+      const response = await fetch(`${baseUrl}/api/patient/login-patient`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
