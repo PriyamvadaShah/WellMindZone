@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+'use client'; // Optional: for future interactive logic
+
+import Link from 'next/link';
 
 const NotFound = () => {
   return (
@@ -12,12 +14,10 @@ const NotFound = () => {
             {"Something's missing."}
           </p>
           <p className="mb-4 text-lg font-light text-gray-500">
-            {
-              " Sorry, we can't find that page. You'll find lots to explore on the home page."
-            }
+            Sorry, we can't find that page. You'll find lots to explore on the home page.
           </p>
           <Link
-            to={"/"}
+            href="/"
             className="inline-flex text-white bg-gradient-to-r from-green-500 to-green-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center my-4"
           >
             Back to Homepage

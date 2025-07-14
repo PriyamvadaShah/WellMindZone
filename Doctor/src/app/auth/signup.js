@@ -9,12 +9,11 @@ export default function Signup() {
 
   async function handleSignup(event) {
     event.preventDefault();
-    const response = await fetch("/api/auth/signup", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/patient/register-patient`, {
       method: "POST",
-      body: JSON.stringify({ email, password }),
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
     });
-
     if (response.ok) {
       router.push("/auth/login");
     } else {

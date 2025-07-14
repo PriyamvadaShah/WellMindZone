@@ -1,5 +1,3 @@
-
-import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/router";
 
@@ -10,16 +8,21 @@ export default function Login() {
 
   async function handleLogin(event) {
     event.preventDefault();
-    const result = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/patient/login-patient`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
     });
 
-    if (!result.error) {
+    const data = await response.json();
+
+    if (response.ok) {
+      // Optional: Save token to localStorage or cookies
+      localStorage.setItem("token", data.token);
       router.push("/dashboard");
     } else {
-      alert(result.error);
+      alert(data.message || "Login failed");
     }
   }
 

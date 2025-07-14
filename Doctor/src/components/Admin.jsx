@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { jsPDF } from 'jspdf';
 import { FaUserShield, FaChartBar, FaUserMd, FaUserInjured, FaCalendarCheck, FaFilePdf } from 'react-icons/fa';

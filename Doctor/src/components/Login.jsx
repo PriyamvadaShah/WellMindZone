@@ -1,56 +1,55 @@
-import React, { useState, useContext } from "react";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { useNavigate } from 'react-router-dom';
-import { FaEnvelope, FaLock, FaSignInAlt } from "react-icons/fa";
-import {LoginContext} from "../context/LoginContext";
-import { config } from "../../vite.config";
+'use client';
 
+import React, { useState, useContext } from 'react';
+import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+import { FaEnvelope, FaLock, FaSignInAlt } from 'react-icons/fa';
+import Link from 'next/link';
+import { LoginContext } from '../context/LoginContext';
 
 const Login = () => {
   const { setIsLoggedIn } = useContext(LoginContext);
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
-  const [responseMessage, setResponseMessage] = useState("");
+  const [responseMessage, setResponseMessage] = useState('');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  const navigate = useNavigate();
+
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:6005';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-const baseUrl = config.apiUrl || "http://localhost:6005"; // Use config from vite.config.js
     try {
-
-      const response = await fetch(`${baseUrl}/api/patient/login-patient`, {
-        method: "POST",
+      const response = await fetch(`${baseUrl}/api/doctor/login-doctor`, {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
 
       const data = await response.json();
-
       if (response.ok) {
-        setResponseMessage("Login successful!");
-        navigate('/Doctors');  
+        setResponseMessage('Login successful!');
         setIsLoggedIn(true);
+        router.push('/Patients');
       } else {
-        setResponseMessage(data.message || "Login failed. Please try again.");
+        setResponseMessage(data.message || 'Login failed. Please try again.');
       }
     } catch (error) {
-      console.error("Error during login:", error);
-      setResponseMessage("An error occurred. Please try again later.");
+      console.error('Error during login:', error);
+      setResponseMessage('An error occurred. Please try again later.');
     }
 
     setFormData({
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     });
   };
 
@@ -67,10 +66,7 @@ const baseUrl = config.apiUrl || "http://localhost:6005"; // Use config from vit
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Email
             </label>
             <div className="relative">
@@ -87,11 +83,9 @@ const baseUrl = config.apiUrl || "http://localhost:6005"; // Use config from vit
               />
             </div>
           </div>
+
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
             <div className="relative">
@@ -108,6 +102,7 @@ const baseUrl = config.apiUrl || "http://localhost:6005"; // Use config from vit
               />
             </div>
           </div>
+
           <button
             type="submit"
             className="w-full bg-accent text-primary font-bold py-2 px-4 rounded-md hover:bg-primary hover:text-accent transition duration-300 flex items-center justify-center"
@@ -116,18 +111,20 @@ const baseUrl = config.apiUrl || "http://localhost:6005"; // Use config from vit
             Login
           </button>
         </form>
+
         {responseMessage && (
           <div
             className={`mt-4 text-center font-medium ${
-              responseMessage.includes("successful") ? "text-green-500" : "text-red-500"
+              responseMessage.includes('successful') ? 'text-green-500' : 'text-red-500'
             }`}
           >
             {responseMessage}
           </div>
         )}
+
         <p className="mt-4 text-center text-sm text-gray-600">
-          Don't have an account?{" "}
-          <Link to="/signup" className="text-accent hover:underline">
+          Don't have an account?{' '}
+          <Link href="/signup" className="text-accent hover:underline">
             Sign up
           </Link>
         </p>

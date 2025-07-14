@@ -1,34 +1,38 @@
+'use client'
+
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaUser, FaSignInAlt, FaBars, FaTimes } from 'react-icons/fa';
 import Logo from '../assets/healthlogo.jpeg';
-import './Header.css'
+import './Header.css';
+import Image from "next/image";
+
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeItem, setActiveItem] = useState('/');
-    const location = useLocation();
+    const pathname = usePathname();
 
     useEffect(() => {
-        setActiveItem(location.pathname);
-    }, [location]);
+        setActiveItem(pathname);
+    }, [pathname]);
 
     const navItems = [
         { title: 'Home', path: '/' },
         { title: 'About', path: '/about-us' }, 
         { title: 'Features', path: '/features' },
         { title: 'Appointments', path: '/appointments' },
-        { title: 'Patients', path: '/patients' },
-       
+        { title: 'Doctors', path: '/doctors' },
         { title: 'Contact', path: '/contact-us' },
     ];
 
     return (
-        <header className="bg-green-600 py-3 px-5  ">
+        <header className="bg-green-600 py-3 px-5">
             <div className="container mx-auto">
                 <div className="flex justify-between items-center">
-                    <Link to="/" className="flex items-center space-x-2">
-                        <img src={Logo} alt="Health Nest Logo" className="h-10 w-auto" />
+                    <Link href="/" className="flex items-center space-x-2">
+                        <Image src={Logo} alt="Health Nest Logo" className="h-10 w-auto" />
                         <span className="text-2xl font-bold text-accent">WellMind Zone</span>
                     </Link>
 
@@ -36,8 +40,8 @@ const Header = () => {
                         {navItems.map((item) => (
                             <Link
                                 key={item.path}
-                                to={item.path}
-                                className={`relative px-3 py-2 text-base font-main text-light hover:text-accent transition-colors duration-300 ${
+                                href={item.path}
+                                className={`relative px-3 py-2 text-base text-light hover:text-accent transition-colors duration-300 ${
                                     activeItem === item.path ? 'text-accent' : ''
                                 }`}
                             >
@@ -55,10 +59,10 @@ const Header = () => {
                     </nav>
 
                     <div className="hidden md:flex items-center space-x-3">
-                        <Link to="/signup" className="bg-pink-400 text-primary px-4 py-1.5 rounded-full hover:bg-light transition duration-300 text-sm font-medium">
+                        <Link href="/signup" className="bg-pink-400 text-primary px-4 py-1.5 rounded-full hover:bg-light transition duration-300 text-sm font-medium">
                             <FaUser className="inline-block mr-1" />Sign Up
                         </Link>
-                        <Link to="/login" className="bg-light text-primary px-4 py-1.5 rounded-full hover:bg-accent transition duration-300 text-sm font-medium">
+                        <Link href="/login" className="bg-light text-primary px-4 py-1.5 rounded-full hover:bg-accent transition duration-300 text-sm font-medium">
                             <FaSignInAlt className="inline-block mr-1" />Log In
                         </Link>
                     </div>
@@ -83,7 +87,7 @@ const Header = () => {
                             {navItems.map((item) => (
                                 <Link
                                     key={item.path}
-                                    to={item.path}
+                                    href={item.path}
                                     className={`block py-2 px-3 text-base font-medium text-light hover:text-accent transition duration-300 ${
                                         activeItem === item.path ? 'text-accent' : ''
                                     }`}
@@ -93,14 +97,14 @@ const Header = () => {
                                 </Link>
                             ))}
                             <Link
-                                to="/signup"
+                                href="/signup"
                                 className="block py-2 px-3 text-base font-medium text-light hover:text-accent transition duration-300"
                                 onClick={() => setIsMenuOpen(false)}
                             >
                                 <FaUser className="inline-block mr-1" />Sign Up
                             </Link>
                             <Link
-                                to="/login"
+                                href="/login"
                                 className="block py-2 px-3 text-base font-medium text-light hover:text-accent transition duration-300"
                                 onClick={() => setIsMenuOpen(false)}
                             >

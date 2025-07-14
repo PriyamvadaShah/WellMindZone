@@ -1,28 +1,22 @@
-import React, { useCallback, useEffect, useState } from "react";
+'use client'; // Only required if using in Next.js /app directory
+
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { CgChevronDoubleUp } from "react-icons/cg";
 
 const ScrollToTopButton = () => {
   const [visible, setVisible] = useState(false);
 
-  function scrollToTop() {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  }
-  const listenToScroll = useCallback(() => {
-    let heightToHidden = 250;
-    const winScroll =
-      document.body.scrollTop || document.documentElement.scrollTop;
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-    if (winScroll > heightToHidden) {
-      setVisible(true);
-    } else {
-      setVisible(false);
-    }
-  }, [setVisible])
-  
+  const listenToScroll = useCallback(() => {
+    const heightToShow = 250;
+    const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+    setVisible(winScroll > heightToShow);
+  }, []);
+
   useEffect(() => {
     window.addEventListener("scroll", listenToScroll);
     return () => window.removeEventListener("scroll", listenToScroll);
@@ -62,14 +56,16 @@ const Wrapper = styled.div`
 
     .up-icon {
       font-size: 1.5rem;
-      transition: transform 0.5s;
+      color: white;
+      transition: transform 0.3s ease;
       &:hover {
         transform: translateY(-2px);
       }
     }
   }
+
   @media (max-width: 700px) {
-    .top-btn{
+    .top-btn {
       width: 40px;
       height: 40px;
       bottom: 5rem;

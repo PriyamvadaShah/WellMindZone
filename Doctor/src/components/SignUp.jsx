@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+'use client';
+
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { FaUser, FaEnvelope, FaLock, FaPhoneAlt } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import PasswordStrengthBar from "react-password-strength-bar";
-import { config } from "../../vite.config"; // Adjust the path as necessary
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -24,38 +25,26 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const formPayload = new FormData();
-    
-    // Explicitly log password value
-    console.log("Password value:", formData.password);
-    
     Object.entries(formData).forEach(([key, value]) => {
-      // Log each field being added
-      console.log(`Adding ${key}:`, value);
       formPayload.append(key, value);
     });
 
-    // Verify password in FormData
-    console.log("Checking final FormData:");
-    for (let pair of formPayload.entries()) {
-      console.log(pair[0], pair[1]);
-    }
-const baseUrl = config.apiUrl || "http://localhost:6005"; // Use config from vite.config.js
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6005";
     try {
-      const response = await fetch(`${baseUrl}/api/patient/register-patient`, {
+      const response = await fetch(`${baseUrl}/api/doctor/register-doctor`, {
         method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        body: formPayload,
       });
+
+      const data = await response.json();
+
       if (response.ok) {
-        const data = await response.json();
         setResponseMessage("Signup successful! Please log in.");
         setIsError(false);
       } else {
-        const error = await response.json();
-        setResponseMessage(error.message || "Signup failed.");
+        setResponseMessage(data.message || "Signup failed.");
         setIsError(true);
       }
     } catch (error) {
@@ -63,7 +52,6 @@ const baseUrl = config.apiUrl || "http://localhost:6005"; // Use config from vit
       setIsError(true);
     }
 
-    // Reset form fields
     setFormData({
       name: "",
       email: "",
@@ -112,6 +100,7 @@ const baseUrl = config.apiUrl || "http://localhost:6005"; // Use config from vit
               />
             </div>
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email
@@ -129,6 +118,7 @@ const baseUrl = config.apiUrl || "http://localhost:6005"; // Use config from vit
               />
             </div>
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
@@ -147,6 +137,7 @@ const baseUrl = config.apiUrl || "http://localhost:6005"; // Use config from vit
             </div>
             <PasswordStrengthBar password={formData.password} />
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Gender
@@ -164,6 +155,7 @@ const baseUrl = config.apiUrl || "http://localhost:6005"; // Use config from vit
               <option value="Female">Female</option>
             </select>
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Phone Number
@@ -181,6 +173,7 @@ const baseUrl = config.apiUrl || "http://localhost:6005"; // Use config from vit
               />
             </div>
           </div>
+
           <button
             type="submit"
             className="w-full bg-accent text-primary font-bold py-2 px-4 rounded-md hover:bg-primary hover:text-accent transition duration-300"
@@ -188,9 +181,10 @@ const baseUrl = config.apiUrl || "http://localhost:6005"; // Use config from vit
             Sign Up
           </button>
         </form>
+
         <p className="mt-4 text-center text-sm text-gray-600">
           Already have an account?{" "}
-          <Link to="/login" className="text-accent hover:underline">
+          <Link href="/login" className="text-accent hover:underline">
             Log in
           </Link>
         </p>
