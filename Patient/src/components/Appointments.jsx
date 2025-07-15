@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useLogin } from "../context/LoginContext";
 import { motion } from "framer-motion";
@@ -28,7 +28,8 @@ const Appointments = () => {
 
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6005";
 
-  const fetchAppointments = async () => {
+  // Use useCallback to memoize the function and provide a stable reference
+  const fetchAppointments = useCallback(async () => {
     try {
       const response = await fetch(`${baseUrl}/api/doctor/appointments`);
       if (response.ok) {
@@ -44,11 +45,12 @@ const Appointments = () => {
     } catch (error) {
       console.error("Error:", error);
     }
-  };
+  }, [baseUrl]); // Dependency on baseUrl
 
+  // Now, the useEffect hook's dependency array is correct and won't cause an infinite loop
   useEffect(() => {
-    if (isLoggedIn) fetchAppointments();
-  }, [isLoggedIn]);
+    fetchAppointments();
+  }, [fetchAppointments]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
