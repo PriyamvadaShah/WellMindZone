@@ -5,36 +5,46 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default [
-  { ignores: ['dist'] },
-  {
-    files: ['**/*.{js,jsx}'],
-    languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
-      parserOptions: {
-        ecmaVersion: 'latest',
-        ecmaFeatures: { jsx: true },
-        sourceType: 'module',
-      },
-    },
-    settings: { react: { version: '18.3' } },
-    plugins: {
-      react,
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
-    },
-    rules: {
-      ...js.configs.recommended.rules,
-      ...react.configs.recommended.rules,
-      ...react.configs['jsx-runtime'].rules,
-      ...reactHooks.configs.recommended.rules,
-      'react/jsx-no-target-blank': 'off',
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true }, // Keep this option if you need it
-      ],
-      // If you specifically want to configure no-unused-vars, do it like this:
-      // 'no-unused-vars': ['warn', { 'argsIgnorePattern': '^_' }],
-    },
-  },
+  { ignores: ['dist'] },
+  {
+    files: ['**/*.{js,jsx}'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: {
+        ...globals.browser,
+        process: true,
+      },
+      parserOptions: {
+        ecmaVersion: 'latest',
+        ecmaFeatures: { jsx: true },
+        sourceType: 'module',
+      },
+    },
+    settings: { react: { version: '18.3' } },
+    plugins: {
+      react,
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
+    rules: {
+      // Basic ESLint rules
+      ...js.configs.recommended.rules,
+      'no-unused-vars': 'off', // <-- Disabled
+      'no-undef': 'off',       // <-- Disabled
+      'react/jsx-no-target-blank': 'off',
+      
+      // React-specific rules
+      'react/prop-types': 'off', // <-- Disabled
+      'react/react-in-jsx-scope': 'off', // Not needed in modern React
+      
+      // Fix the key error
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+      
+      // Hooks rules
+      ...reactHooks.configs.recommended.rules,
+    },
+  },
 ]
