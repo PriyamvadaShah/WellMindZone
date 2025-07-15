@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Slider from 'react-slick';
-import Review from './Review';
+// import Review from './Review';
 
 import {
   FaHospital,
@@ -18,15 +18,15 @@ import {
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-import health1 from '../assets/health1.jpeg';
-import health2 from '../assets/health2.jpeg';
-import health3 from '../assets/health3.jpeg';
-import yoga from '../assets/yoga.jpeg';
-import chatbot from '../assets/chatbot.jpeg';
-import games from '../assets/games.jpeg';
-import mental_test from '../assets/mental_test.jpeg';
-import reading from '../assets/reading.jpeg';
-import videocon from '../assets/videocon.jpeg';
+import health1 from '../../assets/health1.jpeg';
+import health2 from '../../assets/health2.jpeg';
+import health3 from '../../assets/health3.jpeg';
+import yoga from '../../assets/yoga.jpeg';
+import chatbot from '../../assets/chatbot.jpeg';
+import games from '../../assets/games.jpeg';
+import mental_test from '../../assets/mental_test.jpeg';
+import reading from '../../assets/reading.jpeg';
+import videocon from '../../assets/videocon.jpeg';
 
 const HomePage = () => {
   const features = [
@@ -209,7 +209,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      <Review />
+      {/* <Review /> */}
     </div>
   );
 };
