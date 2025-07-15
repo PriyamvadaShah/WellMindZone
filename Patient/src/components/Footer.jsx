@@ -8,8 +8,8 @@ import { motion } from 'framer-motion';
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
-  const socialLinks = [,
-    { icon: FaLinkedinIn, href: 'https://www.linkedin.com/in/priyamvada-shah-186089289/', color: 'text-blue-700' },
+  const socialLinks = [
+    { icon: FaLinkedinIn, href: 'https://www.linkedin.com/in/priyamvada-shah-186089289/', color: 'text-blue-700' }
   ];
 
   const footerLinks = [
