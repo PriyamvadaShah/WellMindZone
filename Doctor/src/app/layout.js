@@ -8,7 +8,7 @@ import Footer from "../components/Footer";
 import ScrollToTop from "../components/ScrollToTop";
 import ScrollToTopButton from "../components/ScrollToTopButton";
 
-import "../styles/index.css"; // Tailwind + global styles
+import "../Styles/index.css"; // Tailwind + global styles
 
 export default function RootLayout({ children }) {
   return (

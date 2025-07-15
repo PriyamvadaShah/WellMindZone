@@ -1,3 +1,4 @@
+'use client'; // Only if using client-side features like useState/useEffect
 import React from 'react';
 
 const TermsOfService = () => {

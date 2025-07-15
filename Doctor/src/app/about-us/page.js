@@ -1,3 +1,4 @@
+'use client'; // Only if using client-side features like useState/useEffect
 import React from 'react';
 // Removed lucide-react import as it's causing module not found error
 // Removed framer-motion import to avoid potential issues
