@@ -38,7 +38,7 @@ const Login = () => {
       if (response.ok) {
         setResponseMessage('Login successful!');
         setIsLoggedIn(true);
-        router.push('/Patients');
+        router.push('/doctors');
       } else {
         setResponseMessage(data.message || 'Login failed. Please try again.');
       }

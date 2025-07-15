@@ -1,4 +1,5 @@
-import { createContext, useState, useContext } from "react";
+"use client";
+import { createContext, useState, useContext, useEffect } from "react";
 
 // Create the context
 const LoginContext = createContext();
@@ -7,10 +8,23 @@ const LoginContext = createContext();
 const LoginProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  // On initial load, read login status from localStorage
+  useEffect(() => {
+    const storedLoginStatus = localStorage.getItem("isLoggedIn");
+    if (storedLoginStatus === "true") {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  // When login state changes, persist to localStorage
+  useEffect(() => {
+    localStorage.setItem("isLoggedIn", isLoggedIn.toString());
+  }, [isLoggedIn]);
+
   const loginContextValue = {
     isLoggedIn,
     setIsLoggedIn,
-    // You can add more login-related logic here
+    // Add more if needed (e.g. user info, logout handler)
   };
 
   return (
@@ -29,4 +43,4 @@ const useLogin = () => {
   return context;
 };
 
-export { LoginProvider, useLogin, LoginContext };
+export { LoginProvider, LoginContext, useLogin };

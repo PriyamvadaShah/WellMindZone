@@ -1,88 +1,86 @@
-class PeerService {
-  constructor() {
-    this.peer = null;
-    this.isNegotiating = false;
-    this.initializePeer();
-  }
+let peerService = null;
 
-  initializePeer() {
-    console.log("Creating new peer connection...");
-    
-    try {
+if (typeof window !== "undefined") {
+  class PeerService {
+    constructor() {
+      this.peer = null;
+      this.initializePeer();
+    }
+
+    initializePeer() {
+      console.log("🔄 Creating new RTCPeerConnection...");
+
       this.peer = new RTCPeerConnection({
         iceServers: [
-          {
-            urls: [
-              "stun:stun.l.google.com:19302",
-              "stun:stun1.l.google.com:19302"
-            ]
-          }
+          { urls: ["stun:stun.l.google.com:19302"] }
         ]
       });
 
-      // Simple state logging
-      this.peer.addEventListener('connectionstatechange', () => {
-        console.log(`Connection state: ${this.peer.connectionState}`);
+      this.peer.addEventListener("connectionstatechange", () => {
+        console.log(`📡 Connection State: ${this.peer.connectionState}`);
       });
 
-      this.peer.addEventListener('iceconnectionstatechange', () => {
-        console.log(`ICE state: ${this.peer.iceConnectionState}`);
+      this.peer.addEventListener("iceconnectionstatechange", () => {
+        console.log(`❄️ ICE State: ${this.peer.iceConnectionState}`);
       });
-
-      return this.peer;
-    } catch (err) {
-      console.error("Peer creation failed:", err);
-      throw err;
     }
-  }
 
-  async getOffer() {
-    if (!this.peer) this.initializePeer();
-    
-    try {
-      // Add transceivers first
-      this.peer.addTransceiver('video', {direction: 'sendrecv'});
-      this.peer.addTransceiver('audio', {direction: 'sendrecv'});
-      
+    resetConnection() {
+      console.log("🧹 Resetting peer connection...");
+      if (this.peer) {
+        this.peer.ontrack = null;
+        this.peer.onicecandidate = null;
+        this.peer.close();
+        this.peer = null;
+      }
+      this.initializePeer();
+    }
+
+    async getOffer() {
+      if (!this.peer || this.peer.connectionState === "closed") {
+        this.resetConnection();
+      }
+
+      // getOffer() should be called AFTER tracks have been added.
+      // addTrack implicitly creates the necessary transceivers.
       const offer = await this.peer.createOffer();
       await this.peer.setLocalDescription(offer);
       return offer;
-    } catch (err) {
-      console.error("Offer creation failed:", err);
-      throw err;
     }
-  }
 
-  async getAnswer(offer) {
-    if (!this.peer) this.initializePeer();
-    
-    try {
+    async getAnswer(offer) {
+      if (!this.peer || this.peer.connectionState === "closed") {
+        this.resetConnection();
+      }
+
+      // getAnswer() should be called AFTER tracks have been added.
+      // addTrack implicitly creates the necessary transceivers.
       await this.peer.setRemoteDescription(new RTCSessionDescription(offer));
       const answer = await this.peer.createAnswer();
       await this.peer.setLocalDescription(answer);
       return answer;
-    } catch (err) {
-      console.error("Answer creation failed:", err);
-      throw err;
+    }
+
+    async setRemoteDescription(answer) {
+      if (!this.peer || this.peer.connectionState === "closed") {
+        this.resetConnection();
+      }
+
+      await this.peer.setRemoteDescription(new RTCSessionDescription(answer));
+    }
+
+    cleanup() {
+      console.log("🧹 Cleaning up peer connection...");
+      if (this.peer) {
+        this.peer.ontrack = null;
+        this.peer.onicecandidate = null;
+        this.peer.close();
+        this.peer = null;
+      }
     }
   }
 
-  async setRemoteDescription(ans) {
-    try {
-      await this.peer.setRemoteDescription(new RTCSessionDescription(ans));
-    } catch (err) {
-      console.error("Setting remote description failed:", err);
-      throw err;
-    }
-  }
-
-  cleanup() {
-    if (this.peer) {
-      this.peer.close();
-      this.peer = null;
-    }
-  }
+  peerService = new PeerService();
 }
 
-const peerService = new PeerService();
 export default peerService;

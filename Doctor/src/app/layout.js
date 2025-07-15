@@ -1,9 +1,7 @@
-// app/layout.js
 'use client';
 
-import { useState } from "react";
-import { LoginContext } from "../context/LoginContext";
 import { SocketProvider } from "../context/SocketProvider";
+import { LoginProvider } from "../context/LoginContext";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -13,12 +11,10 @@ import ScrollToTopButton from "../components/ScrollToTopButton";
 import "../styles/index.css"; // Tailwind + global styles
 
 export default function RootLayout({ children }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   return (
     <html lang="en">
       <body>
-        <LoginContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+        <LoginProvider>
           <SocketProvider>
             <div className="bg-light min-h-screen font-sans text-primary flex flex-col">
               <ScrollToTop />
@@ -30,7 +26,7 @@ export default function RootLayout({ children }) {
               <Footer />
             </div>
           </SocketProvider>
-        </LoginContext.Provider>
+        </LoginProvider>
       </body>
     </html>
   );

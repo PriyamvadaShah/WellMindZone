@@ -9,7 +9,7 @@ import { Appointment } from "../models/Appointment.js";
 export const registerPatient = async (req, res) => {
     try {
         const { name, email, gender, mobile, age, password} = req.body;
-        console.log("abc", req);
+        console.log("abc", req.body);
         // Check if the patient already exists
         const existingPatient = await Doctor.findOne({ email });
         if (existingPatient) {

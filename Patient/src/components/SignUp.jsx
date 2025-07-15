@@ -13,29 +13,35 @@ const SignUp = () => {
     password: "",
     gender: "",
     mobile: "",
-    file: null,
   });
   const [responseMessage, setResponseMessage] = useState(null);
   const [isError, setIsError] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
-    setFormData({ ...formData, [name]: type === "file" ? files[0] : value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formPayload = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      formPayload.append(key, value);
-    });
+    const jsonPayload = {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      gender: formData.gender,
+      mobile: formData.mobile,
+    };
 
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:6005";
+
     try {
       const response = await fetch(`${baseUrl}/api/doctor/register-doctor`, {
         method: "POST",
-        body: formPayload,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(jsonPayload),
       });
 
       const data = await response.json();
@@ -58,7 +64,6 @@ const SignUp = () => {
       password: "",
       gender: "",
       mobile: "",
-      file: null,
     });
   };
 
@@ -73,6 +78,7 @@ const SignUp = () => {
         <h2 className="text-3xl font-bold text-primary mb-6 text-center">
           Sign Up for WellMind Zone
         </h2>
+
         {responseMessage && (
           <p
             className={`text-center mb-4 ${
@@ -82,6 +88,7 @@ const SignUp = () => {
             {responseMessage}
           </p>
         )}
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -147,6 +154,7 @@ const SignUp = () => {
               value={formData.gender}
               onChange={handleChange}
               className="pl-4 pr-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
+              required
             >
               <option value="" disabled>
                 Select Gender

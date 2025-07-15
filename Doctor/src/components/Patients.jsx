@@ -57,9 +57,11 @@ const Patients = () => {
   };
 
   useEffect(() => {
+    const baseUrl=process.env.NEXT_PUBLIC_API_URL || "http://localhost:6005";
     async function fetchPatients() {
       try {
-        const res = await axios.get('/api/patients/get-patients');
+        const res = await axios.get(`${baseUrl}/api/patient/get-patients`);
+        console.log("Fetched patients:", res.data);
         setPatients(res.data?.data || []);
       } catch (error) {
         console.error("Failed to fetch patients:", error);
