@@ -1,7 +1,7 @@
 'use client'; // Only if using client-side features like useState/useEffect
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSocket } from '../context/SocketProvider';
+import { useSocket } from '../../context/SocketProvider';
 
 const LobbyScreen = () => {
   const navigate = useNavigate();
