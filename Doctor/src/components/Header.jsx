@@ -25,6 +25,7 @@ const Header = () => {
         { title: 'Appointments', path: '/appointments' },
         { title: 'Patients', path: '/patients' },
         { title: 'Contact', path: '/contact-us' },
+        {title:'Video Call', path:'/lobby'}
     ];
 
     return (

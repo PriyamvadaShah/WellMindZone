@@ -3,7 +3,12 @@
 
 'use client'; // Only if using client-side features like useState/useEffect
 import React from 'react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+
 import Patients from '../../components/Patients'; // Adjust the path if needed
 export default function HomePage() {
-  return <Patients />;
+  
+
+      return <Patients />;
 }

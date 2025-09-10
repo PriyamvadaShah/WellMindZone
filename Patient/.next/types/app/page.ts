@@ -1,4 +1,4 @@
-// File: C:\Users\HP\WellMindZone\Patient\src\app\page.jsx
+// File: D:\wellmind\WellMindZone\Patient\src\app\page.jsx
 import * as entry from '../../../src/app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
